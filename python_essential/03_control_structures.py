@@ -1,16 +1,19 @@
-# 파이썬 제어 구조
+# 파이썬 제어 구조 예제
+# 작성일: 2024-04-08
+# 목적: 파이썬의 다양한 제어 구조와 그 사용법을 설명하는 예제 코드
 
 # 1. 조건문 (if-elif-else)
-print("=== 조건문 (if-elif-else) ===")
+# 조건문은 특정 조건에 따라 다른 코드를 실행할 수 있게 해줍니다.
+print("=== 1. 조건문 (if-elif-else) ===")
 
-# 기본 if문
+# 기본 if 문
 age = 20
-if age >= 18:
+if age >= 20:
     print("성인입니다.")
 else:
     print("미성년자입니다.")
 
-# if-elif-else
+# if-elif-else 문
 score = 85
 if score >= 90:
     print("A 등급")
@@ -21,93 +24,76 @@ elif score >= 70:
 else:
     print("D 등급")
 
-# 중첩된 if문
+# 중첩된 if 문
 age = 20
 has_ticket = True
-if age >= 18:
+if age >= 20:
     if has_ticket:
         print("입장 가능합니다.")
     else:
         print("티켓이 필요합니다.")
 else:
-    print("나이가 부족합니다.")
+    print("나이 제한으로 입장할 수 없습니다.")
 
 # 조건부 표현식 (삼항 연산자)
 age = 20
 status = "성인" if age >= 18 else "미성년자"
 
 # 2. 반복문 (for)
-print("\n=== 반복문 (for) ===")
+# for 문은 시퀀스(리스트, 튜플, 문자열 등)의 각 요소에 대해 반복합니다.
+print("\n=== 2. 반복문 (for) ===")
 
-# 기본 for문
-print("기본 for문:")
-for i in range(5):
-    print(f"i = {i}")
-
-# range() 사용
-print("\nrange() 사용:")
-print("1부터 10까지:")
-for i in range(1, 11):
-    print(i, end=" ")
-print()
-
-print("2씩 증가:")
-for i in range(0, 10, 2):
-    print(i, end=" ")
-print()
-
-# 리스트 순회
-print("\n리스트 순회:")
+# 기본 for 문
 fruits = ["사과", "바나나", "오렌지"]
 for fruit in fruits:
     print(fruit)
 
-# enumerate() 사용
-print("\nenumerate() 사용:")
-for index, fruit in enumerate(fruits):
-    print(f"인덱스 {index}: {fruit}")
+# range() 함수를 사용한 for 문
+# range(n)은 0부터 n-1까지의 숫자를 생성합니다.
+for i in range(5):
+    print(i)
 
-# 딕셔너리 순회
-print("\n딕셔너리 순회:")
-person = {"name": "홍길동", "age": 25, "city": "서울"}
-for key in person:
-    print(f"키: {key}, 값: {person[key]}")
+# range() 함수의 시작과 끝을 지정
+# range(start, end)는 start부터 end-1까지의 숫자를 생성합니다.
+for i in range(1, 6):
+    print(i)
 
-for key, value in person.items():
-    print(f"키: {key}, 값: {value}")
+# range() 함수의 시작, 끝, 간격을 지정
+# range(start, end, step)은 start부터 end-1까지 step 간격으로 숫자를 생성합니다.
+for i in range(1, 10, 2):
+    print(i)
 
 # 3. 반복문 (while)
-print("\n=== 반복문 (while) ===")
+# while 문은 조건이 참인 동안 계속해서 반복합니다.
+print("\n=== 3. 반복문 (while) ===")
 
-# 기본 while문
-print("기본 while문:")
+# 기본 while 문
 count = 0
 while count < 5:
-    print(f"count = {count}")
+    print(count)
     count += 1
 
-# break 사용
-print("\nbreak 사용:")
+# break 문
+# break 문은 반복문을 즉시 종료합니다.
 count = 0
 while True:
     if count >= 5:
         break
-    print(f"count = {count}")
+    print(count)
     count += 1
 
-# continue 사용
-print("\ncontinue 사용:")
+# continue 문
+# continue 문은 현재 반복을 건너뛰고 다음 반복으로 넘어갑니다.
 for i in range(10):
     if i % 2 == 0:
         continue
-    print(i, end=" ")
-print()
+    print(i)
 
 # 4. 예외 처리 (try-except)
-print("\n=== 예외 처리 (try-except) ===")
+# 예외 처리는 프로그램 실행 중 발생할 수 있는 오류를 처리합니다.
+print("\n=== 4. 예외 처리 (try-except) ===")
 
 # 기본 예외 처리
-print("기본 예외 처리:")
 try:
     number = int(input("숫자를 입력하세요: "))
     result = 10 / number
@@ -121,109 +107,83 @@ except Exception as e:
 else:
     print("예외가 발생하지 않았습니다.")
 finally:
-    print("프로그램을 종료합니다.")
+    print("예외 처리 종료")
 
-# 5. with 문 (컨텍스트 관리자)
-print("\n=== with 문 (컨텍스트 관리자) ===")
+# 5. 컨텍스트 매니저 (with)
+# with 문은 리소스를 자동으로 관리합니다.
+print("\n=== 5. 컨텍스트 매니저 (with) ===")
 
-# 파일 처리
-print("파일 처리:")
-try:
-    with open("test.txt", "w") as file:
-        file.write("Hello, Python!")
-    print("파일이 성공적으로 생성되었습니다.")
-except IOError as e:
-    print(f"파일 처리 중 오류 발생: {e}")
+# 파일 처리 예제
+with open("example.txt", "w") as file:
+    file.write("Hello, World!")
 
-# 6. match 문 (Python 3.10+)
-print("\n=== match 문 (Python 3.10+) ===")
+with open("example.txt", "r") as file:
+    content = file.read()
+    print(content)
 
-# 기본 match문
-def check_command(command):
-    match command:
-        case "start":
-            return "시작합니다."
-        case "stop":
-            return "중지합니다."
-        case "restart":
-            return "재시작합니다."
-        case _:
-            return "알 수 없는 명령입니다."
+# 6. 패턴 매칭 (match)
+# match 문은 Python 3.10에서 도입된 새로운 제어 구조입니다.
+print("\n=== 6. 패턴 매칭 (match) ===")
 
-print(check_command("start"))
-print(check_command("stop"))
-print(check_command("unknown"))
+# 기본 match 문
+command = "start"
+match command:
+    case "start":
+        print("시작합니다.")
+    case "stop":
+        print("중지합니다.")
+    case "restart":
+        print("재시작합니다.")
+    case _:
+        print("알 수 없는 명령입니다.")
 
-# 패턴 매칭
-def process_point(point):
-    match point:
-        case (x, y):
-            return f"2D 좌표: ({x}, {y})"
-        case (x, y, z):
-            return f"3D 좌표: ({x}, {y}, {z})"
-        case _:
-            return "알 수 없는 좌표입니다."
+# 7. 컴프리헨션
+# 컴프리헨션은 리스트, 딕셔너리, 집합을 간결하게 생성할 수 있게 해줍니다.
+print("\n=== 7. 컴프리헨션 ===")
 
-print(process_point((1, 2)))
-print(process_point((1, 2, 3)))
+# 리스트 컴프리헨션
+squares = [x**2 for x in range(5)]
+print(f"제곱수 리스트: {squares}")
 
-# 7. 제어문과 컴프리헨션
-print("\n=== 제어문과 컴프리헨션 ===")
+# 조건부 리스트 컴프리헨션
+even_squares = [x**2 for x in range(10) if x % 2 == 0]
+print(f"짝수의 제곱수 리스트: {even_squares}")
 
-# 리스트 컴프리헨션과 조건문
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-even_numbers = [x for x in numbers if x % 2 == 0]
-print(f"짝수: {even_numbers}")
+# 딕셔너리 컴프리헨션
+square_dict = {x: x**2 for x in range(5)}
+print(f"제곱수 딕셔너리: {square_dict}")
 
-# 딕셔너리 컴프리헨션과 조건문
-squares = {x: x**2 for x in range(5) if x % 2 == 0}
-print(f"짝수의 제곱: {squares}")
+# 8. 함수와 재귀
+# 함수는 코드를 재사용할 수 있게 해주며, 재귀는 함수가 자기 자신을 호출하는 방식입니다.
+print("\n=== 8. 함수와 재귀 ===")
 
-# 8. 제어문과 함수
-print("\n=== 제어문과 함수 ===")
+# 기본 함수
+def greet(name):
+    return f"안녕하세요, {name}님!"
 
-# 조건부 반환
-def get_grade(score):
-    if score >= 90:
-        return "A"
-    elif score >= 80:
-        return "B"
-    elif score >= 70:
-        return "C"
-    else:
-        return "D"
-
-print(f"85점의 등급: {get_grade(85)}")
+print(greet("홍길동"))
 
 # 재귀 함수
 def factorial(n):
-    if n <= 1:
+    if n == 0:
         return 1
     return n * factorial(n - 1)
 
 print(f"5의 팩토리얼: {factorial(5)}")
 
-# 9. 제어문과 클래스
-print("\n=== 제어문과 클래스 ===")
+# 9. 클래스
+# 클래스는 객체 지향 프로그래밍의 기본 단위입니다.
+print("\n=== 9. 클래스 ===")
 
-class Student:
-    def __init__(self, name, score):
+class Person:
+    def __init__(self, name, age):
         self.name = name
-        self.score = score
+        self.age = age
     
-    def get_grade(self):
-        if self.score >= 90:
-            return "A"
-        elif self.score >= 80:
-            return "B"
-        elif self.score >= 70:
-            return "C"
-        else:
-            return "D"
-    
-    def is_passing(self):
-        return self.score >= 60
+    def greet(self):
+        return f"안녕하세요, 저는 {self.name}이고 {self.age}살입니다."
 
-student = Student("홍길동", 85)
-print(f"{student.name}의 등급: {student.get_grade()}")
-print(f"합격 여부: {'합격' if student.is_passing() else '불합격'}") 
+person = Person("홍길동", 25)
+print(person.greet())
+
+print("\n프로그램 종료") 
