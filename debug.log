@@ -1,0 +1,11 @@
+2025-04-07 16:26:11,162 - DEBUG - 함수 시작: 입력 데이터 = [1, 2, 3, 4, 5]
+2025-04-07 16:26:11,164 - INFO - 계산 완료: 결과 = 3.0
+2025-04-07 16:26:11,164 - DEBUG - 함수 시작: 입력 데이터 = []
+2025-04-07 16:26:11,164 - WARNING - 빈 데이터가 입력되었습니다.
+2025-04-07 16:26:11,164 - DEBUG - 함수 시작: 입력 데이터 = 문자열
+2025-04-07 16:26:11,165 - ERROR - 오류 발생: unsupported operand type(s) for +: 'int' and 'str'
+Traceback (most recent call last):
+  File "D:\python\11_debugging.py", line 63, in process_data
+    result = sum(data) / len(data)
+             ^^^^^^^^^
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
