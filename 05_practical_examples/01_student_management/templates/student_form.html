@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{% if student %}학생 수정{% else %}새 학생 추가{% endif %} - 학생 관리 시스템{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{% if student %}학생 수정{% else %}새 학생 추가{% endif %}</h1>
+
+<form method="POST" action="{% if student %}/students/{{ student.id }}/edit{% else %}/students/add{% endif %}">
+    <div class="mb-3">
+        <label for="name" class="form-label">이름</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ student.name if student else '' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="student_id" class="form-label">학번</label>
+        <input type="text" class="form-control" id="student_id" name="student_id" value="{{ student.student_id if student else '' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="grade" class="form-label">학년</label>
+        <input type="number" class="form-control" id="grade" name="grade" value="{{ student.grade if student else '' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="major" class="form-label">전공</label>
+        <input type="text" class="form-control" id="major" name="major" value="{{ student.major if student else '' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="birth_date" class="form-label">생년월일</label>
+        <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ student.birth_date if student else '' }}" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">{% if student %}수정{% else %}추가{% endif %}</button>
+    <a href="/students" class="btn btn-secondary">취소</a>
+</form>
+{% endblock %} 
