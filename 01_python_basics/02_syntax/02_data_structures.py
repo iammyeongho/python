@@ -2,7 +2,7 @@
 # 작성일: 2024-04-08
 # 목적: 파이썬의 기본 데이터 구조와 관련된 다양한 기능을 설명하는 예제 코드
 
-# 1. 리스트 (List)
+# 1. 리스트 (List) | 인덱스 배열
 # 리스트는 순서가 있는 가변 시퀀스입니다.
 # - 인덱스로 접근 가능 (0부터 시작)
 # - 요소 추가/삭제/수정 가능
@@ -132,9 +132,18 @@ print(f"사람 정보: {person}")
 
 # 딕셔너리 접근
 print(f"\n딕셔너리 접근:")
-print(f"이름: {person['name']}")  # 키로 접근
-print(f"나이: {person.get('age')}")  # get() 메서드로 접근
-print(f"존재하지 않는 키: {person.get('height', '정보 없음')}")  # 기본값 지정
+print(f"이름: {person['name']}")  # 대괄호([])를 사용한 접근: 키가 없으면 KeyError 발생
+print(f"나이: {person.get('age')}")  # get() 메서드를 사용한 접근: 키가 없으면 None 반환
+print(f"존재하지 않는 키: {person.get('height', '정보 없음')}")  # get() 메서드에 기본값 지정: 키가 없으면 '정보 없음' 반환
+
+# 접근 방식 비교
+try:
+    print(f"존재하지 않는 키 접근: {person['height']}")  # KeyError 발생
+except KeyError:
+    print("KeyError: 'height' 키가 존재하지 않습니다.")
+
+print(f"get()으로 존재하지 않는 키 접근: {person.get('height')}")  # None 반환
+print(f"get()으로 존재하지 않는 키 접근 (기본값 지정): {person.get('height', '정보 없음')}")  # '정보 없음' 반환
 
 # 딕셔너리 수정
 print(f"\n딕셔너리 수정:")
