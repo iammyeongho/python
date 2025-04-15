@@ -327,6 +327,13 @@ print(f"문자열 포함 확인: {'hello'.count('l')}")  # 2 (개수)
 # - 바이트 배열은 가변(mutable)
 print("\n=== 6. 바이트 (Bytes)와 바이트 배열 (Bytearray) ===")
 
+# 바이트 배열의 주요 사용 사례:
+# 1. 이진 데이터 처리 (이미지, 오디오, 비디오 파일 등)
+# 2. 네트워크 통신 (소켓 프로그래밍)
+# 3. 암호화/복호화 작업
+# 4. 하드웨어 제어 (시리얼 통신 등)
+# 5. 메모리 효율적인 대용량 데이터 처리
+
 # 바이트 생성
 byte_data = b'Hello'  # 바이트 문자열
 print(f"바이트: {byte_data}")
@@ -340,6 +347,35 @@ print(f"바이트 배열 타입: {type(bytearray_data)}")
 # 바이트 배열은 수정 가능
 bytearray_data[0] = 74  # 'J'의 ASCII 코드
 print(f"수정된 바이트 배열: {bytearray_data}")
+
+# 바이트 배열의 실제 사용 예제
+print("\n바이트 배열의 실제 사용 예제:")
+
+# 1. 이진 데이터 처리 예제
+# 이미지 데이터를 바이트 배열로 처리
+image_data = bytearray([0xFF, 0xD8, 0xFF, 0xE0])  # JPEG 파일 시그니처
+print(f"이미지 데이터: {image_data}")
+
+# 2. 네트워크 통신 예제
+# 소켓 통신에서 데이터 송수신
+message = bytearray("안녕하세요".encode('utf-8'))
+print(f"인코딩된 메시지: {message}")
+
+# 3. 암호화 예제
+# 간단한 XOR 암호화
+key = 0x55
+encrypted_data = bytearray([b ^ key for b in message])
+print(f"암호화된 데이터: {encrypted_data}")
+
+# 4. 하드웨어 제어 예제
+# 시리얼 통신에서 명령어 전송
+command = bytearray([0x01, 0x02, 0x03])  # 장비 제어 명령
+print(f"하드웨어 명령어: {command}")
+
+# 5. 메모리 효율적인 데이터 처리
+# 대용량 데이터를 청크로 처리
+large_data = bytearray(1024)  # 1KB 크기의 바이트 배열
+print(f"대용량 데이터 크기: {len(large_data)} bytes")
 
 # 7. None 타입
 # None은 값이 없음을 나타내는 특수 타입입니다.
@@ -355,7 +391,7 @@ if None:
 else:
     print("None은 False로 평가됩니다.")
 
-# 8. 복합 데이터 구조
+# 8. 복합 데이터 구조 | 다차원 배열
 # 데이터 구조 안에 다른 데이터 구조를 포함할 수 있습니다.
 print("\n=== 8. 복합 데이터 구조 ===")
 
