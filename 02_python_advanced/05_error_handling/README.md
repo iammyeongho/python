@@ -1,6 +1,19 @@
-# 4. Python과 PHP의 에러 처리 비교
+# 에러 처리
 
-이 디렉토리는 Python과 PHP의 에러 처리 방식을 비교하는 예제를 포함합니다.
+이 디렉토리는 파이썬의 에러 처리 개념을 다룹니다.
+
+## 파일 구조
+
+1. `01_basic_errors.py`: 기본적인 예외 처리
+2. `02_custom_errors.py`: 사용자 정의 예외
+3. `03_context_managers.py`: 컨텍스트 매니저와 with 문
+4. `04_logging.py`: 로깅과 디버깅
+5. `05_file_errors.py`: 파일 처리 관련 예외
+6. `06_network_errors.py`: 네트워크 관련 예외
+7. `07_database_errors.py`: 데이터베이스 관련 예외
+8. `08_best_practices.py`: 에러 처리 모범 사례
+
+각 파일은 해당 주제에 대한 예제 코드와 설명을 포함하고 있습니다.
 
 ## 주요 내용
 

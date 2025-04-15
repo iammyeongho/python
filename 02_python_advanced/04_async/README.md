@@ -1,6 +1,19 @@
-# 9. Python과 PHP의 비동기 프로그래밍 비교
+# 비동기 프로그래밍
 
-이 디렉토리는 Python과 PHP의 비동기 프로그래밍을 비교하는 예제를 포함합니다.
+이 디렉토리는 파이썬의 비동기 프로그래밍 개념을 다룹니다.
+
+## 파일 구조
+
+1. `01_basic_async.py`: 비동기 프로그래밍의 기본 개념
+2. `02_coroutines.py`: 코루틴과 async/await
+3. `03_tasks.py`: 태스크와 이벤트 루프
+4. `04_futures.py`: Future 객체와 콜백
+5. `05_streams.py`: 비동기 스트림
+6. `06_websockets.py`: WebSocket 클라이언트/서버
+7. `07_advanced_async.py`: 고급 비동기 프로그래밍
+8. `08_async_db.py`: 비동기 데이터베이스 접근
+
+각 파일은 해당 주제에 대한 예제 코드와 설명을 포함하고 있습니다.
 
 ## 주요 내용
 

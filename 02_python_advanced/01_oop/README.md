@@ -1,6 +1,19 @@
-# 5. Python과 PHP의 객체지향 프로그래밍 비교
+# 객체지향 프로그래밍 (OOP)
 
-이 디렉토리는 Python과 PHP의 객체지향 프로그래밍 개념을 비교하는 예제를 포함합니다.
+이 디렉토리는 파이썬의 객체지향 프로그래밍 개념을 다룹니다.
+
+## 파일 구조
+
+1. `01_basic_oop.py`: 객체지향 프로그래밍의 기본 개념
+2. `02_encapsulation.py`: 캡슐화와 정보 은닉
+3. `03_inheritance.py`: 상속과 다형성
+4. `04_polymorphism.py`: 다형성과 메서드 오버라이딩
+5. `05_magic_methods.py`: 매직 메서드와 연산자 오버로딩
+6. `06_decorators.py`: 데코레이터와 메타프로그래밍
+7. `07_design_patterns.py`: 디자인 패턴
+8. `08_solid_principles.py`: SOLID 원칙
+
+각 파일은 해당 주제에 대한 예제 코드와 설명을 포함하고 있습니다.
 
 ## 주요 내용
 
