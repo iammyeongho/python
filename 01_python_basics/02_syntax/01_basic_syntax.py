@@ -101,7 +101,7 @@ print("\n=== 5. 반복문 ===")
 # for 문
 print("for 문:")
 for i in range(5):
-    print(i, end=" ")  # 0 1 2 3 4
+    print(i, end=" ")  # end=" "는 print() 함수의 기본 줄바꿈(\n) 대신 공백을 출력하도록 설정합니다. 이를 통해 여러 값을 한 줄에 출력할 수 있습니다.
 print()
 
 # while 문
@@ -115,10 +115,10 @@ print()  # 0 1 2 3 4
 # break 문
 print("\nbreak 문:")
 for i in range(10):
-    if i == 5:
+    if i == 3:
         break
     print(i, end=" ")
-print()  # 0 1 2 3 4
+print()  # 0 1 2
 
 # continue 문
 print("\ncontinue 문:")
@@ -171,7 +171,7 @@ print("\n=== 8. 예외 처리 ===")
 # try-except 문
 try:
     number = int("abc")
-except ValueError:
+except ValueError:  # ValueError는 문자열을 숫자로 변환할 수 없을 때 발생하는 특정 예외입니다.
     print("숫자로 변환할 수 없습니다.")
 
 # try-except-else 문
@@ -179,7 +179,7 @@ try:
     number = int("123")
 except ValueError:
     print("숫자로 변환할 수 없습니다.")
-else:
+else:  # 예외가 발생하지 않았을 때만 실행됩니다.
     print("성공적으로 변환되었습니다.")
 
 # try-except-finally 문
@@ -187,25 +187,116 @@ try:
     number = int("abc")
 except ValueError:
     print("숫자로 변환할 수 없습니다.")
-finally:
+finally:  # 예외 발생 여부와 관계없이 항상 실행됩니다.
     print("항상 실행됩니다.")
+
+# 다양한 예외 처리 예제
+print("\n다양한 예외 처리 예제:")
+try:
+    # 1. ValueError 예외
+    num = int("abc")
+except ValueError:
+    print("ValueError: 문자열을 숫자로 변환할 수 없습니다.")
+
+try:
+    # 2. ZeroDivisionError 예외
+    result = 10 / 0
+except ZeroDivisionError:
+    print("ZeroDivisionError: 0으로 나눌 수 없습니다.")
+
+try:
+    # 3. IndexError 예외
+    my_list = [1, 2, 3]
+    print(my_list[5])
+except IndexError:
+    print("IndexError: 리스트의 범위를 벗어난 인덱스입니다.")
+
+try:
+    # 4. KeyError 예외
+    my_dict = {"name": "홍길동"}
+    print(my_dict["age"])
+except KeyError:
+    print("KeyError: 딕셔너리에 존재하지 않는 키입니다.")
+
+try:
+    # 5. TypeError 예외
+    result = "문자열" + 123
+except TypeError:
+    print("TypeError: 서로 다른 타입의 연산이 불가능합니다.")
+
+# 모든 예외를 한 번에 처리하는 방법
+try:
+    # 여러 예외가 발생할 수 있는 코드
+    num = int(input("숫자를 입력하세요: "))
+    result = 10 / num
+    my_list = [1, 2, 3]
+    print(my_list[num])
+except ValueError:
+    print("올바른 숫자를 입력해주세요.")
+except ZeroDivisionError:
+    print("0으로 나눌 수 없습니다.")
+except IndexError:
+    print("리스트의 범위를 벗어났습니다.")
+except Exception as e:  # 모든 예외를 처리
+    print(f"예외가 발생했습니다: {e}")
+finally:
+    print("예외 처리 완료")
 
 # 9. 모듈 임포트
 # 모듈을 임포트하여 사용할 수 있습니다.
 print("\n=== 9. 모듈 임포트 ===")
 
-# 기본 임포트
-import math
-print(f"파이: {math.pi}")  # 3.141592653589793
-print(f"제곱근: {math.sqrt(16)}")  # 4.0
+# 1. 기본 임포트 방식
+import math  # math 모듈 전체를 임포트
+print(f"파이: {math.pi}")  # math.을 통해 모듈의 멤버에 접근
+print(f"제곱근: {math.sqrt(16)}")
 
-# from 임포트
-from random import randint
-print(f"랜덤 정수: {randint(1, 10)}")  # 1부터 10 사이의 랜덤 정수
+# 2. from-import 방식
+from random import randint  # random 모듈에서 randint 함수만 임포트
+print(f"랜덤 정수: {randint(1, 10)}")  # 모듈 이름 없이 직접 사용 가능
 
-# as 임포트
-import datetime as dt
-now = dt.datetime.now()
+# 3. as를 사용한 별칭 지정
+import datetime as dt  # datetime 모듈을 dt라는 별칭으로 임포트
+now = dt.datetime.now()  # dt.을 통해 모듈의 멤버에 접근
 print(f"현재 시간: {now}")
+
+# 4. 여러 항목을 한 번에 임포트
+from math import pi, sqrt, sin, cos  # math 모듈에서 여러 함수/상수를 임포트
+print(f"파이: {pi}")  # 모듈 이름 없이 직접 사용
+print(f"제곱근: {sqrt(25)}")
+print(f"사인: {sin(0)}")
+print(f"코사인: {cos(0)}")
+
+# 5. 모든 항목 임포트 (권장하지 않음)
+from math import *  # math 모듈의 모든 항목을 임포트
+print(f"탄젠트: {tan(0)}")  # 모듈 이름 없이 직접 사용
+
+# 6. 서브모듈 임포트
+import os.path  # os 모듈의 path 서브모듈 임포트
+print(f"현재 작업 디렉토리: {os.path.abspath('.')}")
+
+# 7. 상대 경로 임포트 (패키지 내부에서 사용)
+# from . import module_name  # 현재 디렉토리의 모듈 임포트
+# from .. import module_name  # 상위 디렉토리의 모듈 임포트
+
+# 8. 조건부 임포트
+try:
+    import numpy as np  # numpy가 설치되어 있지 않을 수 있음
+    print("numpy가 설치되어 있습니다.")
+except ImportError:
+    print("numpy가 설치되어 있지 않습니다.")
+
+# 9. 임포트 순서 (PEP 8 스타일 가이드)
+# 1. 표준 라이브러리
+import os
+import sys
+import math
+
+# 2. 서드파티 라이브러리
+import numpy as np
+import pandas as pd
+
+# 3. 로컬 애플리케이션/라이브러리
+# from mypackage import mymodule
 
 print("\n프로그램 종료") 
