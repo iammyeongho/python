@@ -189,43 +189,77 @@ set2 = {4, 5, 6, 7, 8}
 
 print(f"\n집합 연산:")
 # 1. 합집합 (Union): 두 집합의 모든 요소를 포함 (중복 제외)
+# | 연산자 또는 union() 메서드 사용
+# union() 메서드는 여러 집합을 인자로 받을 수 있음: set1.union(set2, set3, ...)
 print(f"합집합: {set1 | set2}")  # {1, 2, 3, 4, 5, 6, 7, 8}
 print(f"합집합 (union): {set1.union(set2)}")  # union() 메서드 사용
 
 # 2. 교집합 (Intersection): 두 집합에 공통으로 있는 요소만 포함
+# & 연산자 또는 intersection() 메서드 사용
+# intersection() 메서드는 여러 집합을 인자로 받을 수 있음
 print(f"교집합: {set1 & set2}")  # {4, 5}
 print(f"교집합 (intersection): {set1.intersection(set2)}")  # intersection() 메서드 사용
 
 # 3. 차집합 (Difference): 첫 번째 집합에는 있지만 두 번째 집합에는 없는 요소
+# - 연산자 또는 difference() 메서드 사용
+# difference() 메서드는 여러 집합을 인자로 받을 수 있음
 print(f"차집합: {set1 - set2}")  # {1, 2, 3}
 print(f"차집합 (difference): {set1.difference(set2)}")  # difference() 메서드 사용
 
 # 4. 대칭차집합 (Symmetric Difference): 한 집합에만 있는 요소들의 합집합
+# ^ 연산자 또는 symmetric_difference() 메서드 사용
+# symmetric_difference() 메서드는 하나의 집합만 인자로 받을 수 있음
 print(f"대칭차집합: {set1 ^ set2}")  # {1, 2, 3, 6, 7, 8}
 print(f"대칭차집합 (symmetric_difference): {set1.symmetric_difference(set2)}")  # symmetric_difference() 메서드 사용
 
 # 5. 부분집합과 상위집합 확인
 print(f"\n부분집합과 상위집합:")
 subset = {1, 2, 3}
+# issubset(): 현재 집합이 다른 집합의 부분집합인지 확인
 print(f"{subset}는 {set1}의 부분집합인가? {subset.issubset(set1)}")  # True
+# issuperset(): 현재 집합이 다른 집합의 상위집합인지 확인
 print(f"{set1}는 {subset}의 상위집합인가? {set1.issuperset(subset)}")  # True
 
 # 6. 서로소 집합 확인 (교집합이 없는지)
 print(f"\n서로소 집합 확인:")
 disjoint_set = {6, 7, 8}
+# isdisjoint(): 현재 집합과 다른 집합이 서로소인지 확인 (교집합이 없는지)
 print(f"{subset}와 {disjoint_set}는 서로소인가? {subset.isdisjoint(disjoint_set)}")  # True
 
 # 7. 집합 연산의 결과를 새로운 집합으로 저장
-union_set = set1 | set2
-intersection_set = set1 & set2
-difference_set = set1 - set2
-symmetric_difference_set = set1 ^ set2
+# 연산 결과를 변수에 저장하여 재사용 가능
+union_set = set1 | set2  # 또는 set1.union(set2)
+intersection_set = set1 & set2  # 또는 set1.intersection(set2)
+difference_set = set1 - set2  # 또는 set1.difference(set2)
+symmetric_difference_set = set1 ^ set2  # 또는 set1.symmetric_difference(set2)
 
 print(f"\n집합 연산 결과 저장:")
 print(f"합집합: {union_set}")
 print(f"교집합: {intersection_set}")
 print(f"차집합: {difference_set}")
 print(f"대칭차집합: {symmetric_difference_set}")
+
+# 8. 집합 연산의 실제 사용 예제
+print(f"\n집합 연산의 실제 사용 예제:")
+# 학생들의 수강 과목
+math_students = {"홍길동", "김철수", "이영희"}
+science_students = {"김철수", "박지성", "이영희"}
+
+# 두 과목 모두 수강하는 학생
+both_subjects = math_students & science_students
+print(f"수학과 과학을 모두 수강하는 학생: {both_subjects}")
+
+# 수학만 수강하는 학생
+only_math = math_students - science_students
+print(f"수학만 수강하는 학생: {only_math}")
+
+# 과학만 수강하는 학생
+only_science = science_students - math_students
+print(f"과학만 수강하는 학생: {only_science}")
+
+# 전체 수강 학생
+all_students = math_students | science_students
+print(f"전체 수강 학생: {all_students}")
 
 # 집합 메서드
 print(f"\n집합 메서드:")
