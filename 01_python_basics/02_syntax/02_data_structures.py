@@ -188,14 +188,44 @@ set1 = {1, 2, 3, 4, 5}
 set2 = {4, 5, 6, 7, 8}
 
 print(f"\n집합 연산:")
-print(f"합집합: {set1 | set2}")  # 두 집합의 모든 요소
-print(f"합집합 (union): {set1.union(set2)}")  # union() 메서드
-print(f"교집합: {set1 & set2}")  # 두 집합의 공통 요소
-print(f"교집합 (intersection): {set1.intersection(set2)}")  # intersection() 메서드
-print(f"차집합: {set1 - set2}")  # set1에만 있는 요소
-print(f"차집합 (difference): {set1.difference(set2)}")  # difference() 메서드
-print(f"대칭차집합: {set1 ^ set2}")  # 한 집합에만 있는 요소
-print(f"대칭차집합 (symmetric_difference): {set1.symmetric_difference(set2)}")  # symmetric_difference() 메서드
+# 1. 합집합 (Union): 두 집합의 모든 요소를 포함 (중복 제외)
+print(f"합집합: {set1 | set2}")  # {1, 2, 3, 4, 5, 6, 7, 8}
+print(f"합집합 (union): {set1.union(set2)}")  # union() 메서드 사용
+
+# 2. 교집합 (Intersection): 두 집합에 공통으로 있는 요소만 포함
+print(f"교집합: {set1 & set2}")  # {4, 5}
+print(f"교집합 (intersection): {set1.intersection(set2)}")  # intersection() 메서드 사용
+
+# 3. 차집합 (Difference): 첫 번째 집합에는 있지만 두 번째 집합에는 없는 요소
+print(f"차집합: {set1 - set2}")  # {1, 2, 3}
+print(f"차집합 (difference): {set1.difference(set2)}")  # difference() 메서드 사용
+
+# 4. 대칭차집합 (Symmetric Difference): 한 집합에만 있는 요소들의 합집합
+print(f"대칭차집합: {set1 ^ set2}")  # {1, 2, 3, 6, 7, 8}
+print(f"대칭차집합 (symmetric_difference): {set1.symmetric_difference(set2)}")  # symmetric_difference() 메서드 사용
+
+# 5. 부분집합과 상위집합 확인
+print(f"\n부분집합과 상위집합:")
+subset = {1, 2, 3}
+print(f"{subset}는 {set1}의 부분집합인가? {subset.issubset(set1)}")  # True
+print(f"{set1}는 {subset}의 상위집합인가? {set1.issuperset(subset)}")  # True
+
+# 6. 서로소 집합 확인 (교집합이 없는지)
+print(f"\n서로소 집합 확인:")
+disjoint_set = {6, 7, 8}
+print(f"{subset}와 {disjoint_set}는 서로소인가? {subset.isdisjoint(disjoint_set)}")  # True
+
+# 7. 집합 연산의 결과를 새로운 집합으로 저장
+union_set = set1 | set2
+intersection_set = set1 & set2
+difference_set = set1 - set2
+symmetric_difference_set = set1 ^ set2
+
+print(f"\n집합 연산 결과 저장:")
+print(f"합집합: {union_set}")
+print(f"교집합: {intersection_set}")
+print(f"차집합: {difference_set}")
+print(f"대칭차집합: {symmetric_difference_set}")
 
 # 집합 메서드
 print(f"\n집합 메서드:")
