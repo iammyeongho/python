@@ -3,169 +3,140 @@ PHP와 Python의 데이터 구조 비교
 이 파일은 PHP 개발자가 Python의 데이터 구조를 이해하는 데 도움을 주기 위한 예제입니다.
 """
 
-from typing import List, Dict, Set, Tuple, Any
+from typing import List, Dict, Set, Tuple, Optional, Union, Any
 from dataclasses import dataclass
-from enum import Enum
+from collections import defaultdict, Counter, deque
 
-class DataStructureExamples:
-    """데이터 구조 예제 클래스"""
+# 1. 배열/리스트 비교
+def array_comparison():
+    # Python 리스트 (PHP 배열과 유사)
+    fruits = ["apple", "banana", "cherry"]
+    
+    # 요소 추가
+    fruits.append("orange")  # PHP: array_push($fruits, "orange")
+    
+    # 요소 제거
+    fruits.remove("banana")  # PHP: unset($fruits[array_search("banana", $fruits)])
+    
+    # 요소 접근
+    first_fruit = fruits[0]  # PHP: $fruits[0]
+    
+    # 리스트 컴프리헨션 (PHP의 array_map과 유사)
+    numbers = [1, 2, 3, 4, 5]
+    squares = [x**2 for x in numbers]  # PHP: array_map(fn($x) => $x * $x, $numbers)
+    
+    return fruits, squares
 
-    def __init__(self):
-        # 1. 리스트 (PHP의 배열과 유사)
-        self.simple_list: List[int] = [1, 2, 3, 4, 5]
-        self.mixed_list: List[Any] = [1, "two", 3.0, True]
-        
-        # 2. 딕셔너리 (PHP의 연관 배열과 유사)
-        self.simple_dict: Dict[str, int] = {"one": 1, "two": 2, "three": 3}
-        self.nested_dict: Dict[str, Dict[str, int]] = {
-            "user1": {"age": 25, "score": 85},
-            "user2": {"age": 30, "score": 90}
-        }
-        
-        # 3. 세트 (PHP의 배열의 unique와 유사)
-        self.simple_set: Set[int] = {1, 2, 3, 4, 5}
-        self.another_set: Set[int] = {4, 5, 6, 7, 8}
-        
-        # 4. 튜플 (불변 리스트)
-        self.simple_tuple: Tuple[int, str, float] = (1, "two", 3.0)
-        
-        # 5. 열거형 (PHP의 enum과 유사)
-        self.status = Status
+# 2. 연관 배열/딕셔너리 비교
+def dictionary_comparison():
+    # Python 딕셔너리 (PHP 연관 배열과 유사)
+    person = {
+        "name": "John",
+        "age": 30,
+        "city": "New York"
+    }
+    
+    # 요소 추가/수정
+    person["email"] = "john@example.com"  # PHP: $person["email"] = "john@example.com"
+    
+    # 요소 제거
+    del person["age"]  # PHP: unset($person["age"])
+    
+    # 요소 접근
+    name = person["name"]  # PHP: $person["name"]
+    
+    # 딕셔너리 컴프리헨션
+    numbers = [1, 2, 3, 4, 5]
+    squares_dict = {x: x**2 for x in numbers}  # PHP: array_combine($numbers, array_map(fn($x) => $x * $x, $numbers))
+    
+    return person, squares_dict
 
-    def list_examples(self) -> None:
-        """리스트 예제"""
-        print("\n=== List Examples ===")
-        
-        # 리스트 생성 (PHP: $array = [1, 2, 3];)
-        numbers: List[int] = [1, 2, 3, 4, 5]
-        print(f"Original list: {numbers}")
-        
-        # 요소 추가 (PHP: $array[] = 6;)
-        numbers.append(6)
-        print(f"After append: {numbers}")
-        
-        # 요소 삭제 (PHP: unset($array[0]);)
-        del numbers[0]
-        print(f"After delete: {numbers}")
-        
-        # 리스트 컴프리헨션 (PHP: array_map())
-        squares = [x**2 for x in numbers]
-        print(f"Squares: {squares}")
-        
-        # 필터링 (PHP: array_filter())
-        evens = [x for x in numbers if x % 2 == 0]
-        print(f"Even numbers: {evens}")
+# 3. 세트 비교
+def set_comparison():
+    # Python 세트 (PHP의 array_unique와 유사)
+    fruits = {"apple", "banana", "cherry", "apple"}
+    
+    # 요소 추가
+    fruits.add("orange")  # PHP: $fruits[] = "orange"; $fruits = array_unique($fruits);
+    
+    # 요소 제거
+    fruits.remove("banana")  # PHP: unset($fruits[array_search("banana", $fruits)]);
+    
+    # 세트 연산
+    set1 = {1, 2, 3}
+    set2 = {3, 4, 5}
+    
+    union = set1 | set2  # PHP: array_unique(array_merge($set1, $set2))
+    intersection = set1 & set2  # PHP: array_intersect($set1, $set2)
+    difference = set1 - set2  # PHP: array_diff($set1, $set2)
+    
+    return fruits, union, intersection, difference
 
-    def dict_examples(self) -> None:
-        """딕셔너리 예제"""
-        print("\n=== Dictionary Examples ===")
-        
-        # 딕셔너리 생성 (PHP: $array = ["one" => 1, "two" => 2];)
-        user: Dict[str, Any] = {
-            "name": "John",
-            "age": 30,
-            "email": "john@example.com"
-        }
-        print(f"Original dict: {user}")
-        
-        # 요소 추가 (PHP: $array["city"] = "New York";)
-        user["city"] = "New York"
-        print(f"After add: {user}")
-        
-        # 요소 삭제 (PHP: unset($array["email"]);)
-        del user["email"]
-        print(f"After delete: {user}")
-        
-        # 딕셔너리 컴프리헨션
-        squares = {x: x**2 for x in range(5)}
-        print(f"Squares dict: {squares}")
+# 4. 튜플 비교
+def tuple_comparison():
+    # Python 튜플 (PHP의 배열과 유사하지만 불변)
+    coordinates = (10, 20)
+    
+    # 요소 접근
+    x, y = coordinates  # PHP: list($x, $y) = $coordinates;
+    
+    # 튜플 언패킹
+    name, age, city = ("John", 30, "New York")  # PHP: list($name, $age, $city) = ["John", 30, "New York"];
+    
+    return coordinates, (x, y), (name, age, city)
 
-    def set_examples(self) -> None:
-        """세트 예제"""
-        print("\n=== Set Examples ===")
-        
-        # 세트 생성 (PHP: $array = array_unique([1, 2, 2, 3]);)
-        numbers: Set[int] = {1, 2, 2, 3, 3, 4}
-        print(f"Original set: {numbers}")
-        
-        # 요소 추가 (PHP: $array[] = 5;)
-        numbers.add(5)
-        print(f"After add: {numbers}")
-        
-        # 요소 삭제 (PHP: unset($array[0]);)
-        numbers.remove(1)
-        print(f"After remove: {numbers}")
-        
-        # 세트 연산
-        set1 = {1, 2, 3, 4, 5}
-        set2 = {4, 5, 6, 7, 8}
-        
-        print(f"Union: {set1 | set2}")  # 합집합
-        print(f"Intersection: {set1 & set2}")  # 교집합
-        print(f"Difference: {set1 - set2}")  # 차집합
-
-    def tuple_examples(self) -> None:
-        """튜플 예제"""
-        print("\n=== Tuple Examples ===")
-        
-        # 튜플 생성 (PHP에서는 배열을 const로 선언)
-        point: Tuple[int, int] = (10, 20)
-        print(f"Point: {point}")
-        
-        # 튜플 언패킹 (PHP에서는 list() 사용)
-        x, y = point
-        print(f"x: {x}, y: {y}")
-        
-        # 튜플은 불변 (수정 불가)
-        try:
-            point[0] = 30  # 에러 발생
-        except TypeError as e:
-            print(f"Error: {e}")
-
-    def enum_examples(self) -> None:
-        """열거형 예제"""
-        print("\n=== Enum Examples ===")
-        
-        # 열거형 사용 (PHP의 enum과 유사)
-        status = Status.ACTIVE
-        print(f"Status: {status}")
-        print(f"Status value: {status.value}")
-        
-        # 열거형 비교
-        if status == Status.ACTIVE:
-            print("User is active")
-
-class Status(Enum):
-    """상태 열거형"""
-    ACTIVE = 1
-    INACTIVE = 2
-    SUSPENDED = 3
-
-@dataclass
-class User:
-    """사용자 데이터 클래스"""
-    name: str
-    age: int
-    email: str
-    status: Status = Status.ACTIVE
+# 5. 고급 데이터 구조
+def advanced_structures():
+    # defaultdict (PHP의 array와 유사하지만 기본값 제공)
+    word_count = defaultdict(int)
+    words = ["apple", "banana", "apple", "cherry"]
+    for word in words:
+        word_count[word] += 1  # PHP: $word_count[$word] = ($word_count[$word] ?? 0) + 1;
+    
+    # Counter (PHP의 array_count_values와 유사)
+    counter = Counter(words)  # PHP: array_count_values($words)
+    
+    # deque (PHP의 array와 유사하지만 양쪽 끝에서 효율적인 작업 가능)
+    queue = deque(["apple", "banana", "cherry"])
+    queue.append("orange")  # PHP: array_push($queue, "orange")
+    queue.popleft()  # PHP: array_shift($queue)
+    
+    return word_count, counter, queue
 
 def main():
-    """메인 함수"""
-    examples = DataStructureExamples()
+    # 배열/리스트 비교
+    fruits, squares = array_comparison()
+    print("\nArray/List Comparison:")
+    print(f"Fruits: {fruits}")
+    print(f"Squares: {squares}")
     
-    # 각 데이터 구조 예제 실행
-    examples.list_examples()
-    examples.dict_examples()
-    examples.set_examples()
-    examples.tuple_examples()
-    examples.enum_examples()
+    # 연관 배열/딕셔너리 비교
+    person, squares_dict = dictionary_comparison()
+    print("\nDictionary Comparison:")
+    print(f"Person: {person}")
+    print(f"Squares Dictionary: {squares_dict}")
     
-    # 데이터 클래스 예제
-    print("\n=== Data Class Example ===")
-    user = User("John", 30, "john@example.com")
-    print(f"User: {user}")
-    print(f"User name: {user.name}")
-    print(f"User status: {user.status}")
+    # 세트 비교
+    fruits_set, union, intersection, difference = set_comparison()
+    print("\nSet Comparison:")
+    print(f"Fruits Set: {fruits_set}")
+    print(f"Union: {union}")
+    print(f"Intersection: {intersection}")
+    print(f"Difference: {difference}")
+    
+    # 튜플 비교
+    coordinates, (x, y), (name, age, city) = tuple_comparison()
+    print("\nTuple Comparison:")
+    print(f"Coordinates: {coordinates}")
+    print(f"X: {x}, Y: {y}")
+    print(f"Name: {name}, Age: {age}, City: {city}")
+    
+    # 고급 데이터 구조
+    word_count, counter, queue = advanced_structures()
+    print("\nAdvanced Structures:")
+    print(f"Word Count: {dict(word_count)}")
+    print(f"Counter: {counter}")
+    print(f"Queue: {list(queue)}")
 
 if __name__ == "__main__":
     main() 
