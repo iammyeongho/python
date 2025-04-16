@@ -256,28 +256,12 @@ def delete_data(connection):
             cursor.close()
 
 def main():
-    """
-    메인 함수: 모든 데이터베이스 작업을 순차적으로 실행
-    
-    이 함수는 다음과 같은 작업을 순서대로 수행합니다:
-    1. 데이터베이스 연결
-    2. 테이블 생성
-    3. 샘플 데이터 삽입
-    4. 데이터 조회
-    5. 데이터 수정
-    6. 수정된 데이터 조회
-    7. 데이터 삭제
-    8. 삭제 후 데이터 조회
-    9. 데이터베이스 연결 종료
-    
-    각 단계에서 오류가 발생하면 해당 단계에서 중단됩니다.
-    finally 블록에서 연결을 항상 종료하여 리소스 누수를 방지합니다.
-    """
+    """메인 함수"""
     # 데이터베이스 연결
     connection = connect_to_database()
     if not connection:
         return
-
+    
     try:
         # 테이블 생성
         create_table(connection)
@@ -290,19 +274,24 @@ def main():
         
         # 데이터 수정
         update_data(connection)
-        print("\n수정 후 데이터:")
+        
+        # 수정된 데이터 조회
+        print("\n수정된 데이터:")
         select_data(connection)
         
         # 데이터 삭제
         delete_data(connection)
+        
+        # 삭제 후 데이터 조회
         print("\n삭제 후 데이터:")
         select_data(connection)
         
+    except Error as e:
+        print(f"오류 발생: {e}")
     finally:
-        # 연결 종료 (리소스 정리)
         if connection:
             connection.close()
-            print("\nPostgreSQL 연결이 종료되었습니다.")
+            print("\n데이터베이스 연결이 종료되었습니다.")
 
 if __name__ == "__main__":
     main() 
