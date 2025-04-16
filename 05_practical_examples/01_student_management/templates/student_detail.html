@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ student.name }} ({{ student.student_id }})</h1>
+        <div>
+            <a href="{{ url_for('edit_student', student_id=student.id) }}" class="btn btn-primary">수정</a>
+            <a href="{{ url_for('class_detail', class_id=student.class_id) }}" class="btn btn-secondary">목록으로</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 기본 정보 -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">기본 정보</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>학번</th>
+                            <td>{{ student.student_id }}</td>
+                        </tr>
+                        <tr>
+                            <th>이름</th>
+                            <td>{{ student.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>생년월일</th>
+                            <td>{{ student.birth_date.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        <tr>
+                            <th>학급</th>
+                            <td>{{ class_.grade }}학년 {{ class_.name }}반</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 연락처 정보 -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">연락처 정보</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>연락처</th>
+                            <td>{{ student.phone }}</td>
+                        </tr>
+                        <tr>
+                            <th>주소</th>
+                            <td>{{ student.address }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 성적 정보 -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">성적 정보</h5>
+            <a href="{{ url_for('add_grade', student_id=student.id) }}" class="btn btn-sm btn-primary">성적 추가</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>과목</th>
+                            <th>점수</th>
+                            <th>학기</th>
+                            <th>시험일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                        <tr>
+                            <td>{{ grade.subject }}</td>
+                            <td>{{ grade.score }}</td>
+                            <td>{{ grade.semester }}학기</td>
+                            <td>{{ grade.exam_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_grade', grade_id=grade.id) }}" 
+                                   class="btn btn-sm btn-info">수정</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">등록된 성적이 없습니다.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 출석 정보 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">출석 정보</h5>
+            <a href="{{ url_for('add_attendance', student_id=student.id) }}" class="btn btn-sm btn-primary">출석 추가</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>상태</th>
+                            <th>사유</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in attendances %}
+                        <tr>
+                            <td>{{ attendance.date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ attendance.status }}</td>
+                            <td>{{ attendance.reason or '-' }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_attendance', attendance_id=attendance.id) }}" 
+                                   class="btn btn-sm btn-info">수정</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">등록된 출석 정보가 없습니다.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

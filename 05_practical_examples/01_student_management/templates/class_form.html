@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">학급 {{ '수정' if class_ else '추가' }}</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">반 이름</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{{ class_.name if class_ else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="grade" class="form-label">학년</label>
+                        <input type="number" class="form-control" id="grade" name="grade" 
+                               value="{{ class_.grade if class_ else '' }}" min="1" max="6" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="teacher" class="form-label">담임 선생님</label>
+                        <input type="text" class="form-control" id="teacher" name="teacher" 
+                               value="{{ class_.teacher if class_ else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="room_number" class="form-label">교실 번호</label>
+                        <input type="text" class="form-control" id="room_number" name="room_number" 
+                               value="{{ class_.room_number if class_ else '' }}" required>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <a href="{{ url_for('class_list') }}" class="btn btn-secondary">취소</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

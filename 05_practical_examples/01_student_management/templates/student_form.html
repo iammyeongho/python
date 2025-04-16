@@ -3,35 +3,102 @@
 {% block title %}{% if student %}학생 수정{% else %}새 학생 추가{% endif %} - 학생 관리 시스템{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">{% if student %}학생 수정{% else %}새 학생 추가{% endif %}</h1>
+<div class="container">
+    <h1 class="mb-4">{% if student %}학생 정보 수정{% else %}학생 추가{% endif %}</h1>
+    
+    <form method="POST" class="needs-validation" novalidate>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">기본 정보</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">학번</label>
+                            <input type="text" class="form-control" id="student_id" name="student_id" 
+                                   value="{{ student.student_id if student else '' }}" required>
+                            <div class="invalid-feedback">학번을 입력해주세요.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ student.name if student else '' }}" required>
+                            <div class="invalid-feedback">이름을 입력해주세요.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="birth_date" class="form-label">생년월일</label>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date" 
+                                   value="{{ student.birth_date.strftime('%Y-%m-%d') if student else '' }}" required>
+                            <div class="invalid-feedback">생년월일을 입력해주세요.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">연락처 정보</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">연락처</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="{{ student.phone if student else '' }}" required>
+                            <div class="invalid-feedback">연락처를 입력해주세요.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">주소</label>
+                            <input type="text" class="form-control" id="address" name="address" 
+                                   value="{{ student.address if student else '' }}" required>
+                            <div class="invalid-feedback">주소를 입력해주세요.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="class_id" class="form-label">학급</label>
+                            <select class="form-select" id="class_id" name="class_id" required>
+                                <option value="">학급을 선택하세요</option>
+                                {% for class_ in classes %}
+                                <option value="{{ class_.id }}" 
+                                        {% if student and student.class_id == class_.id %}selected{% endif %}>
+                                    {{ class_.grade }}학년 {{ class_.name }}반
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">학급을 선택해주세요.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+            <a href="{{ url_for('class_detail', class_id=request.args.get('class_id')) }}" 
+               class="btn btn-secondary me-2">취소</a>
+            <button type="submit" class="btn btn-primary">저장</button>
+        </div>
+    </form>
+</div>
 
-<form method="POST" action="{% if student %}/students/{{ student.id }}/edit{% else %}/students/add{% endif %}">
-    <div class="mb-3">
-        <label for="name" class="form-label">이름</label>
-        <input type="text" class="form-control" id="name" name="name" value="{{ student.name if student else '' }}" required>
-    </div>
-    
-    <div class="mb-3">
-        <label for="student_id" class="form-label">학번</label>
-        <input type="text" class="form-control" id="student_id" name="student_id" value="{{ student.student_id if student else '' }}" required>
-    </div>
-    
-    <div class="mb-3">
-        <label for="grade" class="form-label">학년</label>
-        <input type="number" class="form-control" id="grade" name="grade" value="{{ student.grade if student else '' }}" required>
-    </div>
-    
-    <div class="mb-3">
-        <label for="major" class="form-label">전공</label>
-        <input type="text" class="form-control" id="major" name="major" value="{{ student.major if student else '' }}" required>
-    </div>
-    
-    <div class="mb-3">
-        <label for="birth_date" class="form-label">생년월일</label>
-        <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ student.birth_date if student else '' }}" required>
-    </div>
-    
-    <button type="submit" class="btn btn-primary">{% if student %}수정{% else %}추가{% endif %}</button>
-    <a href="/students" class="btn btn-secondary">취소</a>
-</form>
+<script>
+// 폼 유효성 검사
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+</script>
 {% endblock %} 

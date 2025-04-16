@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{% if attendance %}출석 정보 수정{% else %}출석 정보 추가{% endif %}</h1>
+        <a href="{{ url_for('student_detail', student_id=student.id) }}" class="btn btn-secondary">취소</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="date" class="form-label">날짜</label>
+                            <input type="date" class="form-control" id="date" name="date" 
+                                   value="{{ attendance.date.strftime('%Y-%m-%d') if attendance else '' }}" required>
+                            <div class="invalid-feedback">날짜를 선택해주세요.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="status" class="form-label">상태</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="">상태를 선택하세요</option>
+                                <option value="출석" {% if attendance and attendance.status == '출석' %}selected{% endif %}>출석</option>
+                                <option value="지각" {% if attendance and attendance.status == '지각' %}selected{% endif %}>지각</option>
+                                <option value="조퇴" {% if attendance and attendance.status == '조퇴' %}selected{% endif %}>조퇴</option>
+                                <option value="결석" {% if attendance and attendance.status == '결석' %}selected{% endif %}>결석</option>
+                            </select>
+                            <div class="invalid-feedback">출석 상태를 선택해주세요.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">사유</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3">{{ attendance.reason if attendance else '' }}</textarea>
+                            <div class="form-text">결석, 지각, 조퇴의 경우 사유를 입력해주세요.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// 폼 유효성 검사
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+</script>
+{% endblock %} 

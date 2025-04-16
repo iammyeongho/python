@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>학급 목록</h1>
+    <a href="{{ url_for('add_class') }}" class="btn btn-primary">학급 추가</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>학년</th>
+                <th>반</th>
+                <th>담임 선생님</th>
+                <th>교실</th>
+                <th>학생 수</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for class_ in classes %}
+            <tr>
+                <td>{{ class_.grade }}학년</td>
+                <td>{{ class_.name }}반</td>
+                <td>{{ class_.teacher }}</td>
+                <td>{{ class_.room_number }}</td>
+                <td>{{ class_.students|length if class_.students else 0 }}명</td>
+                <td>
+                    <a href="{{ url_for('class_detail', class_id=class_.id) }}" class="btn btn-sm btn-info">상세</a>
+                    <a href="{{ url_for('class_grades', class_id=class_.id) }}" class="btn btn-sm btn-success">성적</a>
+                    <a href="{{ url_for('class_attendance', class_id=class_.id, date_str=date.today().isoformat()) }}" 
+                       class="btn btn-sm btn-warning">출석</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

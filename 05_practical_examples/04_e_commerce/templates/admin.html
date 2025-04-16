@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block title %}관리자 페이지 - 전자상거래 시스템{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">관리자 페이지</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">관리 메뉴</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#products" class="list-group-item list-group-item-action active" data-bs-toggle="tab">
+                        상품 관리
+                    </a>
+                    <a href="#orders" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                        주문 관리
+                    </a>
+                    <a href="#users" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                        사용자 관리
+                    </a>
+                    <a href="#categories" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                        카테고리 관리
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- 상품 관리 탭 -->
+                <div class="tab-pane fade show active" id="products">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>상품 관리</h2>
+                        <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-lg"></i> 상품 추가
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>이미지</th>
+                                            <th>상품명</th>
+                                            <th>카테고리</th>
+                                            <th>가격</th>
+                                            <th>재고</th>
+                                            <th>작업</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in products %}
+                                        <tr>
+                                            <td>{{ product.id }}</td>
+                                            <td>
+                                                {% if product.image_url %}
+                                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px;">
+                                                {% else %}
+                                                <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="상품 이미지" class="img-thumbnail" style="width: 50px;">
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ product.name }}</td>
+                                            <td>{{ product.category.name }}</td>
+                                            <td>{{ product.price|int }}원</td>
+                                            <td>{{ product.stock }}</td>
+                                            <td>
+                                                <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct({{ product.id }})">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 주문 관리 탭 -->
+                <div class="tab-pane fade" id="orders">
+                    <h2 class="mb-3">주문 관리</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>주문번호</th>
+                                            <th>주문자</th>
+                                            <th>주문일</th>
+                                            <th>총액</th>
+                                            <th>상태</th>
+                                            <th>작업</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                        <tr>
+                                            <td>{{ order.id }}</td>
+                                            <td>{{ order.user.username }}</td>
+                                            <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td>{{ order.total_amount|int }}원</td>
+                                            <td>
+                                                <select class="form-select form-select-sm" onchange="updateOrderStatus({{ order.id }}, this.value)">
+                                                    <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>대기중</option>
+                                                    <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>처리중</option>
+                                                    <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>배송중</option>
+                                                    <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>배송완료</option>
+                                                    <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>취소됨</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 사용자 관리 탭 -->
+                <div class="tab-pane fade" id="users">
+                    <h2 class="mb-3">사용자 관리</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>사용자명</th>
+                                            <th>이메일</th>
+                                            <th>가입일</th>
+                                            <th>관리자</th>
+                                            <th>작업</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.id }}</td>
+                                            <td>{{ user.username }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           {% if user.is_admin %}checked{% endif %}
+                                                           onchange="toggleAdmin({{ user.id }}, this.checked)">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteUser({{ user.id }})">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 카테고리 관리 탭 -->
+                <div class="tab-pane fade" id="categories">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>카테고리 관리</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                            <i class="bi bi-plus-lg"></i> 카테고리 추가
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>카테고리명</th>
+                                            <th>설명</th>
+                                            <th>작업</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for category in categories %}
+                                        <tr>
+                                            <td>{{ category.id }}</td>
+                                            <td>{{ category.name }}</td>
+                                            <td>{{ category.description }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" onclick="editCategory({{ category.id }})">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory({{ category.id }})">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 카테고리 추가 모달 -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">카테고리 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">카테고리명</label>
+                        <input type="text" class="form-control" id="categoryName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label">설명</label>
+                        <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" onclick="addCategory()">추가</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function deleteProduct(productId) {
+    if (confirm('이 상품을 삭제하시겠습니까?')) {
+        fetch(`/admin/product/${productId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+}
+
+function updateOrderStatus(orderId, status) {
+    fetch(`/admin/order/${orderId}/update-status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function toggleAdmin(userId, isAdmin) {
+    fetch(`/admin/user/${userId}/toggle-admin`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ is_admin: isAdmin })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            location.reload();
+        }
+    });
+}
+
+function deleteUser(userId) {
+    if (confirm('이 사용자를 삭제하시겠습니까?')) {
+        fetch(`/admin/user/${userId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+}
+
+function addCategory() {
+    const name = document.getElementById('categoryName').value;
+    const description = document.getElementById('categoryDescription').value;
+
+    fetch('/admin/category/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: name, description: description })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function editCategory(categoryId) {
+    // 카테고리 수정 기능 구현
+}
+
+function deleteCategory(categoryId) {
+    if (confirm('이 카테고리를 삭제하시겠습니까?')) {
+        fetch(`/admin/category/${categoryId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
+{% endblock %} 

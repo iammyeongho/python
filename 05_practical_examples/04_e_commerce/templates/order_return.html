@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}반품 신청 - 전자상거래 시스템{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">반품 신청</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        반품 신청 시 주의사항을 확인해 주세요.
+                    </div>
+
+                    <div class="order-summary mb-4">
+                        <h5>주문 정보</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <th>주문 번호</th>
+                                    <td>{{ order.order_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>주문 일시</th>
+                                    <td>{{ order.created_at }}</td>
+                                </tr>
+                                <tr>
+                                    <th>결제 금액</th>
+                                    <td>{{ order.total_amount }}원</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <h5 class="mt-4">반품 상품 선택</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;"></th>
+                                        <th>상품</th>
+                                        <th>수량</th>
+                                        <th>가격</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="form-check-input" name="return_items" 
+                                                   value="{{ item.id }}" id="item_{{ item.id }}">
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" 
+                                                     class="img-thumbnail me-2" style="width: 40px;">
+                                                <div>
+                                                    <label for="item_{{ item.id }}" class="mb-0">
+                                                        {{ item.product.name }}
+                                                    </label>
+                                                    <div class="text-muted small">{{ item.product.category.name }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm" 
+                                                   name="quantity_{{ item.id }}" value="{{ item.quantity }}" 
+                                                   min="1" max="{{ item.quantity }}" style="width: 70px;">
+                                        </td>
+                                        <td>{{ item.total }}원</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('request_return', order_id=order.id) }}">
+                        <div class="mb-4">
+                            <label for="return_reason" class="form-label">반품 사유</label>
+                            <select class="form-select" id="return_reason" name="return_reason" required>
+                                <option value="">반품 사유를 선택해주세요</option>
+                                <option value="단순변심">단순변심</option>
+                                <option value="상품 불량">상품 불량</option>
+                                <option value="배송 지연">배송 지연</option>
+                                <option value="상품 정보 상이">상품 정보 상이</option>
+                                <option value="other">기타</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4" id="other_reason_container" style="display: none;">
+                            <label for="other_reason" class="form-label">기타 사유</label>
+                            <textarea class="form-control" id="other_reason" name="other_reason" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="return_message" class="form-label">추가 메시지 (선택)</label>
+                            <textarea class="form-control" id="return_message" name="return_message" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">반품 방법</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="return_method" 
+                                       id="return_method_pickup" value="pickup" checked>
+                                <label class="form-check-label" for="return_method_pickup">
+                                    택배 수거
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="return_method" 
+                                       id="return_method_direct" value="direct">
+                                <label class="form-check-label" for="return_method_direct">
+                                    직접 반품
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="bank_account" class="form-label">환불 계좌 정보</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="bank_name" name="bank_name" 
+                                           placeholder="은행명" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="account_number" name="account_number" 
+                                           placeholder="계좌번호" required>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <input type="text" class="form-control" id="account_holder" name="account_holder" 
+                                       placeholder="예금주" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning">반품 신청하기</button>
+                            <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn btn-outline-secondary">
+                                돌아가기
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('return_reason').addEventListener('change', function() {
+    const otherReasonContainer = document.getElementById('other_reason_container');
+    if (this.value === 'other') {
+        otherReasonContainer.style.display = 'block';
+    } else {
+        otherReasonContainer.style.display = 'none';
+    }
+});
+
+// 반품 상품 선택 체크박스 이벤트
+document.querySelectorAll('input[name="return_items"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const quantityInput = document.querySelector(`input[name="quantity_${this.value}"]`);
+        quantityInput.disabled = !this.checked;
+    });
+});
+</script>
+{% endblock %} 

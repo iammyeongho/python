@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}주문 추적 - 전자상거래 시스템{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">주문 추적</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>주문 정보</h5>
+                            <p><strong>주문 번호:</strong> {{ order.order_number }}</p>
+                            <p><strong>주문 일시:</strong> {{ order.created_at }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>배송 정보</h5>
+                            <p><strong>택배사:</strong> {{ order.courier }}</p>
+                            <p><strong>운송장 번호:</strong> {{ order.tracking_number }}</p>
+                        </div>
+                    </div>
+
+                    <div class="tracking-timeline">
+                        <div class="timeline-item {% if order.status == '배송완료' %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>주문 접수</h6>
+                                <p class="text-muted">{{ order.created_at }}</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item {% if order.status in ['처리중', '배송중', '배송완료'] %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>상품 준비</h6>
+                                <p class="text-muted">
+                                    {% if order.status in ['처리중', '배송중', '배송완료'] %}
+                                    {{ order.processed_at }}
+                                    {% else %}
+                                    처리 예정
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item {% if order.status in ['배송중', '배송완료'] %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="bi bi-truck"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>배송 시작</h6>
+                                <p class="text-muted">
+                                    {% if order.status in ['배송중', '배송완료'] %}
+                                    {{ order.shipped_at }}
+                                    {% else %}
+                                    배송 예정
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item {% if order.status == '배송완료' %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="bi bi-house-check"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>배송 완료</h6>
+                                <p class="text-muted">
+                                    {% if order.status == '배송완료' %}
+                                    {{ order.delivered_at }}
+                                    {% else %}
+                                    배송 중
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>배송 위치</h5>
+                        <div class="tracking-map">
+                            {% if order.tracking_status %}
+                            <div class="tracking-status">
+                                <p class="mb-2"><strong>현재 위치:</strong> {{ order.tracking_status.location }}</p>
+                                <p class="mb-2"><strong>상태:</strong> {{ order.tracking_status.status }}</p>
+                                <p class="mb-2"><strong>시간:</strong> {{ order.tracking_status.time }}</p>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-geo-alt" style="font-size: 2rem; color: #6c757d;"></i>
+                                <p class="mt-2 text-muted">배송 정보를 불러오는 중입니다...</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn btn-outline-primary">
+                            주문 상세보기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tracking-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.tracking-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 30px;
+    height: 100%;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 60px;
+    margin-bottom: 30px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+
+.timeline-item.completed .timeline-icon {
+    background: #28a745;
+    color: white;
+}
+
+.tracking-map {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 200px;
+}
+</style>
+{% endblock %} 

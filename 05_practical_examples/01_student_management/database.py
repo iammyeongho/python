@@ -1,11 +1,11 @@
 # 학생 관리 시스템 - 데이터베이스
-# 작성일: 2024-04-09
-# 목적: SQLite 데이터베이스를 사용한 학생 정보 관리
+# 작성일: 2024-04-16
+# 목적: 데이터베이스 연결 및 CRUD 작업 처리
 
 import sqlite3
-from typing import List, Optional, Tuple
-from contextlib import contextmanager
-from models import Student
+from typing import List, Optional
+from datetime import date
+from models import Student, Class, Grade, Attendance
 
 class Database:
     """
@@ -15,184 +15,299 @@ class Database:
         db_path (str): 데이터베이스 파일 경로
     """
     
-    def __init__(self, db_path: str = "students.db"):
+    def __init__(self, db_path: str = "student_management.db"):
         """
         데이터베이스 연결 초기화
         
         매개변수:
-            db_path (str): 데이터베이스 파일 경로. 기본값 "students.db"
+            db_path (str): 데이터베이스 파일 경로. 기본값 "student_management.db"
         """
         self.db_path = db_path
-        self._create_tables()
+        self._init_db()
     
-    @contextmanager
     def _get_connection(self):
-        """
-        데이터베이스 연결을 관리하는 컨텍스트 매니저
-        
-        반환:
-            sqlite3.Connection: 데이터베이스 연결 객체
-        """
-        conn = sqlite3.connect(self.db_path)
-        try:
-            yield conn
-        finally:
-            conn.close()
+        return sqlite3.connect(self.db_path)
     
-    def _create_tables(self) -> None:
-        """
-        필요한 테이블을 생성
-        """
+    def _init_db(self):
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            
+            # 학급 테이블
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS classes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    grade INTEGER NOT NULL,
+                    teacher TEXT NOT NULL,
+                    room_number TEXT NOT NULL
+                )
+            ''')
+            
+            # 학생 테이블
+            cursor.execute('''
                 CREATE TABLE IF NOT EXISTS students (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
-                    age INTEGER NOT NULL,
-                    grade TEXT NOT NULL,
-                    major TEXT NOT NULL
+                    student_id TEXT UNIQUE NOT NULL,
+                    birth_date DATE NOT NULL,
+                    class_id INTEGER NOT NULL,
+                    phone TEXT,
+                    address TEXT,
+                    FOREIGN KEY (class_id) REFERENCES classes (id)
                 )
-            """)
+            ''')
+            
+            # 성적 테이블
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS grades (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    student_id INTEGER NOT NULL,
+                    subject TEXT NOT NULL,
+                    score REAL NOT NULL,
+                    semester INTEGER NOT NULL,
+                    exam_date DATE NOT NULL,
+                    FOREIGN KEY (student_id) REFERENCES students (id)
+                )
+            ''')
+            
+            # 출석 테이블
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS attendance (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    student_id INTEGER NOT NULL,
+                    date DATE NOT NULL,
+                    status TEXT NOT NULL,
+                    reason TEXT,
+                    FOREIGN KEY (student_id) REFERENCES students (id)
+                )
+            ''')
+            
             conn.commit()
     
-    def add_student(self, student: Student) -> int:
-        """
-        새로운 학생을 추가
-        
-        매개변수:
-            student (Student): 추가할 학생 객체
-            
-        반환:
-            int: 생성된 학생 ID
-        """
+    # 학급 관련 메서드
+    def add_class(self, class_: Class) -> int:
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO students (name, age, grade, major)
+            cursor.execute('''
+                INSERT INTO classes (name, grade, teacher, room_number)
                 VALUES (?, ?, ?, ?)
-            """, (student.name, student.age, student.grade, student.major))
+            ''', (class_.name, class_.grade, class_.teacher, class_.room_number))
+            conn.commit()
+            return cursor.lastrowid
+    
+    def get_class(self, class_id: int) -> Optional[Class]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM classes WHERE id = ?', (class_id,))
+            row = cursor.fetchone()
+            if row:
+                return Class(id=row[0], name=row[1], grade=row[2], 
+                           teacher=row[3], room_number=row[4])
+            return None
+    
+    def get_all_classes(self) -> List[Class]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM classes')
+            return [Class(id=row[0], name=row[1], grade=row[2], 
+                         teacher=row[3], room_number=row[4]) 
+                   for row in cursor.fetchall()]
+    
+    def update_class(self, class_: Class):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE classes
+                SET name = ?, grade = ?, teacher = ?, room_number = ?
+                WHERE id = ?
+            ''', (class_.name, class_.grade, class_.teacher, 
+                  class_.room_number, class_.id))
+            conn.commit()
+    
+    # 학생 관련 메서드
+    def add_student(self, student: Student) -> int:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO students (name, student_id, birth_date, 
+                                    class_id, phone, address)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (student.name, student.student_id, student.birth_date,
+                  student.class_id, student.phone, student.address))
             conn.commit()
             return cursor.lastrowid
     
     def get_student(self, student_id: int) -> Optional[Student]:
-        """
-        ID로 학생 정보를 조회
-        
-        매개변수:
-            student_id (int): 조회할 학생 ID
-            
-        반환:
-            Optional[Student]: 조회된 학생 객체 또는 None
-        """
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                SELECT id, name, age, grade, major
-                FROM students
-                WHERE id = ?
-            """, (student_id,))
+            cursor.execute('SELECT * FROM students WHERE id = ?', (student_id,))
             row = cursor.fetchone()
-            
             if row:
-                return Student(
-                    id=row[0],
-                    name=row[1],
-                    age=row[2],
-                    grade=row[3],
-                    major=row[4]
-                )
+                return Student(id=row[0], name=row[1], student_id=row[2],
+                             birth_date=date.fromisoformat(row[3]),
+                             class_id=row[4], phone=row[5], address=row[6])
             return None
     
-    def get_all_students(self) -> List[Student]:
-        """
-        모든 학생 정보를 조회
-        
-        반환:
-            List[Student]: 학생 객체 리스트
-        """
+    def get_students_by_class(self, class_id: int) -> List[Student]:
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                SELECT id, name, age, grade, major
-                FROM students
-                ORDER BY id
-            """)
-            return [
-                Student(
-                    id=row[0],
-                    name=row[1],
-                    age=row[2],
-                    grade=row[3],
-                    major=row[4]
-                )
-                for row in cursor.fetchall()
-            ]
+            cursor.execute('SELECT * FROM students WHERE class_id = ?', (class_id,))
+            return [Student(id=row[0], name=row[1], student_id=row[2],
+                          birth_date=date.fromisoformat(row[3]),
+                          class_id=row[4], phone=row[5], address=row[6])
+                   for row in cursor.fetchall()]
     
-    def update_student(self, student: Student) -> bool:
-        """
-        학생 정보를 업데이트
-        
-        매개변수:
-            student (Student): 업데이트할 학생 객체
-            
-        반환:
-            bool: 업데이트 성공 여부
-        """
+    def update_student(self, student: Student):
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
+            cursor.execute('''
                 UPDATE students
-                SET name = ?, age = ?, grade = ?, major = ?
+                SET name = ?, student_id = ?, birth_date = ?, 
+                    class_id = ?, phone = ?, address = ?
                 WHERE id = ?
-            """, (student.name, student.age, student.grade, student.major, student.id))
+            ''', (student.name, student.student_id, student.birth_date,
+                  student.class_id, student.phone, student.address,
+                  student.id))
             conn.commit()
-            return cursor.rowcount > 0
     
-    def delete_student(self, student_id: int) -> bool:
-        """
-        학생을 삭제
-        
-        매개변수:
-            student_id (int): 삭제할 학생 ID
-            
-        반환:
-            bool: 삭제 성공 여부
-        """
+    # 성적 관련 메서드
+    def add_grade(self, grade: Grade) -> int:
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                DELETE FROM students
-                WHERE id = ?
-            """, (student_id,))
+            cursor.execute('''
+                INSERT INTO grades (student_id, subject, score, 
+                                  semester, exam_date)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (grade.student_id, grade.subject, grade.score,
+                  grade.semester, grade.exam_date))
             conn.commit()
-            return cursor.rowcount > 0
+            return cursor.lastrowid
     
-    def search_students(self, keyword: str) -> List[Student]:
-        """
-        키워드로 학생을 검색
-        
-        매개변수:
-            keyword (str): 검색 키워드
-            
-        반환:
-            List[Student]: 검색된 학생 객체 리스트
-        """
+    def get_grade(self, grade_id: int) -> Optional[Grade]:
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                SELECT id, name, age, grade, major
-                FROM students
-                WHERE name LIKE ? OR major LIKE ?
-                ORDER BY id
-            """, (f"%{keyword}%", f"%{keyword}%"))
-            return [
-                Student(
-                    id=row[0],
-                    name=row[1],
-                    age=row[2],
-                    grade=row[3],
-                    major=row[4]
-                )
-                for row in cursor.fetchall()
-            ] 
+            cursor.execute('SELECT * FROM grades WHERE id = ?', (grade_id,))
+            row = cursor.fetchone()
+            if row:
+                return Grade(id=row[0], student_id=row[1], subject=row[2],
+                           score=row[3], semester=row[4],
+                           exam_date=date.fromisoformat(row[5]))
+            return None
+    
+    def get_student_grades(self, student_id: int) -> List[Grade]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM grades WHERE student_id = ?', (student_id,))
+            return [Grade(id=row[0], student_id=row[1], subject=row[2],
+                        score=row[3], semester=row[4],
+                        exam_date=date.fromisoformat(row[5]))
+                   for row in cursor.fetchall()]
+    
+    def get_class_grades(self, class_id: int, semester: Optional[int] = None,
+                        subject: Optional[str] = None) -> List[Grade]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            query = '''
+                SELECT g.* FROM grades g
+                JOIN students s ON g.student_id = s.id
+                WHERE s.class_id = ?
+            '''
+            params = [class_id]
+            
+            if semester:
+                query += ' AND g.semester = ?'
+                params.append(semester)
+            
+            if subject:
+                query += ' AND g.subject = ?'
+                params.append(subject)
+            
+            cursor.execute(query, params)
+            return [Grade(id=row[0], student_id=row[1], subject=row[2],
+                        score=row[3], semester=row[4],
+                        exam_date=date.fromisoformat(row[5]))
+                   for row in cursor.fetchall()]
+    
+    def get_class_subjects(self, class_id: int) -> List[str]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT DISTINCT g.subject FROM grades g
+                JOIN students s ON g.student_id = s.id
+                WHERE s.class_id = ?
+            ''', (class_id,))
+            return [row[0] for row in cursor.fetchall()]
+    
+    def update_grade(self, grade: Grade):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE grades
+                SET student_id = ?, subject = ?, score = ?,
+                    semester = ?, exam_date = ?
+                WHERE id = ?
+            ''', (grade.student_id, grade.subject, grade.score,
+                  grade.semester, grade.exam_date, grade.id))
+            conn.commit()
+    
+    # 출석 관련 메서드
+    def add_attendance(self, attendance: Attendance) -> int:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO attendance (student_id, date, status, reason)
+                VALUES (?, ?, ?, ?)
+            ''', (attendance.student_id, attendance.date,
+                  attendance.status, attendance.reason))
+            conn.commit()
+            return cursor.lastrowid
+    
+    def get_attendance(self, attendance_id: int) -> Optional[Attendance]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM attendance WHERE id = ?', (attendance_id,))
+            row = cursor.fetchone()
+            if row:
+                return Attendance(id=row[0], student_id=row[1],
+                                date=date.fromisoformat(row[2]),
+                                status=row[3], reason=row[4])
+            return None
+    
+    def get_student_attendance(self, student_id: int) -> List[Attendance]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM attendance WHERE student_id = ?', (student_id,))
+            return [Attendance(id=row[0], student_id=row[1],
+                             date=date.fromisoformat(row[2]),
+                             status=row[3], reason=row[4])
+                   for row in cursor.fetchall()]
+    
+    def get_class_attendance(self, class_id: int, date_: date) -> List[Attendance]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT a.* FROM attendance a
+                JOIN students s ON a.student_id = s.id
+                WHERE s.class_id = ? AND a.date = ?
+            ''', (class_id, date_))
+            return [Attendance(id=row[0], student_id=row[1],
+                             date=date.fromisoformat(row[2]),
+                             status=row[3], reason=row[4])
+                   for row in cursor.fetchall()]
+    
+    def update_attendance(self, attendance: Attendance):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE attendance
+                SET student_id = ?, date = ?, status = ?, reason = ?
+                WHERE id = ?
+            ''', (attendance.student_id, attendance.date,
+                  attendance.status, attendance.reason,
+                  attendance.id))
+            conn.commit()
+    
+    def __del__(self):
+        """데이터베이스 연결을 종료합니다."""
+        if hasattr(self, '_conn'):
+            self._conn.close() 

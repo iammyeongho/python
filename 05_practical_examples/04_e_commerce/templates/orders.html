@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}주문 내역 - 전자상거래 시스템{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">주문 내역</h1>
+
+    {% if orders %}
+    <div class="accordion" id="ordersAccordion">
+        {% for order in orders %}
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#order{{ order.id }}">
+                    <div class="d-flex justify-content-between w-100 me-3">
+                        <div>
+                            <span class="me-3">주문번호: {{ order.id }}</span>
+                            <span class="badge {% if order.status == 'pending' %}bg-warning{% elif order.status == 'processing' %}bg-info{% elif order.status == 'shipped' %}bg-primary{% elif order.status == 'delivered' %}bg-success{% elif order.status == 'cancelled' %}bg-danger{% endif %}">
+                                {% if order.status == 'pending' %}결제 대기
+                                {% elif order.status == 'processing' %}처리 중
+                                {% elif order.status == 'shipped' %}배송 중
+                                {% elif order.status == 'delivered' %}배송 완료
+                                {% elif order.status == 'cancelled' %}취소됨
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div>
+                            <small class="text-muted">{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </div>
+                    </div>
+                </button>
+            </h2>
+            <div id="order{{ order.id }}" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                    <!-- 주문 상세 정보 -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>배송 정보</h5>
+                            <p class="mb-1"><strong>받는 분:</strong> {{ order.shipping_address.name }}</p>
+                            <p class="mb-1"><strong>전화번호:</strong> {{ order.shipping_address.phone }}</p>
+                            <p class="mb-1"><strong>이메일:</strong> {{ order.shipping_address.email }}</p>
+                            <p class="mb-1"><strong>주소:</strong> {{ order.shipping_address.address }}</p>
+                            {% if order.shipping_address.memo %}
+                            <p class="mb-1"><strong>배송 메모:</strong> {{ order.shipping_address.memo }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h5>결제 정보</h5>
+                            <p class="mb-1"><strong>결제 방법:</strong> 
+                                {% if order.payment_method == 'card' %}신용/체크카드
+                                {% elif order.payment_method == 'bank' %}무통장 입금
+                                {% elif order.payment_method == 'phone' %}휴대폰 결제
+                                {% endif %}
+                            </p>
+                            <p class="mb-1"><strong>배송 방법:</strong> 
+                                {% if order.shipping_method == 'standard' %}일반 배송
+                                {% elif order.shipping_method == 'express' %}빠른 배송
+                                {% endif %}
+                            </p>
+                            <p class="mb-1"><strong>결제 금액:</strong> {{ order.total_amount|int }}원</p>
+                        </div>
+                    </div>
+
+                    <!-- 주문 상품 목록 -->
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>상품</th>
+                                    <th>가격</th>
+                                    <th>수량</th>
+                                    <th>합계</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.image_url %}
+                                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="img-thumbnail me-3" style="width: 50px;">
+                                            {% else %}
+                                            <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="상품 이미지" class="img-thumbnail me-3" style="width: 50px;">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                <small class="text-muted">{{ item.product.category.name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.price|int }}원</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ (item.price * item.quantity)|int }}원</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 주문 상태 변경 버튼 -->
+                    {% if order.status == 'pending' %}
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-danger me-2" onclick="cancelOrder({{ order.id }})">주문 취소</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-box-seam display-1 text-muted"></i>
+        <h3 class="mt-3">주문 내역이 없습니다</h3>
+        <p class="text-muted">상품을 구매해보세요</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">쇼핑 계속하기</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function cancelOrder(orderId) {
+    if (confirm('정말로 주문을 취소하시겠습니까?')) {
+        fetch(`/orders/${orderId}/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('주문 취소에 실패했습니다.');
+            }
+        });
+    }
+}
+</script>
+{% endblock %} 

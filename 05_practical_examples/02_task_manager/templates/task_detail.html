@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ task.title }} - 작업 관리 시스템{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>{{ task.title }}</h2>
+    </div>
+    <div class="col text-end">
+        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-primary">수정</a>
+        <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">작업 정보</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>설명</h6>
+                    <p>{{ task.description or '설명이 없습니다.' }}</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>상태</h6>
+                        <span class="badge bg-{{ 'success' if task.status == 'done' else 'warning' if task.status == 'in_progress' else 'secondary' }}">
+                            {{ task.status }}
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>우선순위</h6>
+                        <span class="badge bg-{{ 'danger' if task.priority == 'high' else 'warning' if task.priority == 'medium' else 'info' }}">
+                            {{ task.priority }}
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>마감일</h6>
+                        <p>{{ task.due_date.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">댓글</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_comment', task_id=task.id) }}" class="mb-4">
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" rows="3" placeholder="댓글을 입력하세요..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">댓글 추가</button>
+                </form>
+
+                <div class="comments">
+                    {% for comment in comments %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text">{{ comment.content }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                <form method="POST" action="{{ url_for('delete_comment', task_id=task.id, comment_id=comment.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-muted">댓글이 없습니다.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">작업 통계</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>생성일</h6>
+                    <p>{{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+                <div class="mb-3">
+                    <h6>수정일</h6>
+                    <p>{{ task.updated_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+                <div>
+                    <h6>댓글 수</h6>
+                    <p>{{ comments|length }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

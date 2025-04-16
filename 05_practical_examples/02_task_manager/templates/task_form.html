@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ '작업 수정' if task else '새 작업' }} - 작업 관리 시스템{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">{{ '작업 수정' if task else '새 작업' }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">제목</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ task.title if task else '' }}" required>
+                        <div class="invalid-feedback">
+                            제목을 입력해주세요.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">설명</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ task.description if task else '' }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label">상태</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="todo" {% if task and task.status == 'todo' %}selected{% endif %}>할 일</option>
+                                <option value="in_progress" {% if task and task.status == 'in_progress' %}selected{% endif %}>진행 중</option>
+                                <option value="done" {% if task and task.status == 'done' %}selected{% endif %}>완료</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                상태를 선택해주세요.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="priority" class="form-label">우선순위</label>
+                            <select class="form-select" id="priority" name="priority" required>
+                                <option value="low" {% if task and task.priority == 'low' %}selected{% endif %}>낮음</option>
+                                <option value="medium" {% if task and task.priority == 'medium' %}selected{% endif %}>중간</option>
+                                <option value="high" {% if task and task.priority == 'high' %}selected{% endif %}>높음</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                우선순위를 선택해주세요.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="due_date" class="form-label">마감일</label>
+                        <input type="date" class="form-control" id="due_date" name="due_date" value="{{ task.due_date.strftime('%Y-%m-%d') if task else '' }}" required>
+                        <div class="invalid-feedback">
+                            마감일을 선택해주세요.
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">{{ '수정' if task else '추가' }}</button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">취소</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

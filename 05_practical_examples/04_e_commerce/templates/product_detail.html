@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - 전자상거래 시스템{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">홈</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('category_products', category_id=product.category_id) }}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- 상품 이미지 -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" class="card-img-top" alt="상품 이미지">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 상품 정보 -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="card-title h3 mb-3">{{ product.name }}</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="h4 text-primary">{{ product.price|int }}원</span>
+                        {% if product.stock > 0 %}
+                        <span class="badge bg-success">재고 있음</span>
+                        {% else %}
+                        <span class="badge bg-danger">품절</span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text mb-4">{{ product.description }}</p>
+                    
+                    {% if product.stock > 0 %}
+                    <form action="{{ url_for('add_to_cart') }}" method="post" class="mb-4">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="quantity" class="col-form-label">수량:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}">
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary">장바구니에 추가</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 리뷰 섹션 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">상품 리뷰</h2>
+                </div>
+                <div class="card-body">
+                    {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('add_review', product_id=product.id) }}" method="post" class="mb-4">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">평점</label>
+                            <select class="form-select" id="rating" name="rating" required>
+                                <option value="">평점을 선택하세요</option>
+                                <option value="5">5점 - 매우 만족</option>
+                                <option value="4">4점 - 만족</option>
+                                <option value="3">3점 - 보통</option>
+                                <option value="2">2점 - 불만족</option>
+                                <option value="1">1점 - 매우 불만족</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">리뷰 내용</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">리뷰 작성</button>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-info">
+                        리뷰를 작성하려면 <a href="{{ url_for('login') }}">로그인</a>이 필요합니다.
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    {% if reviews %}
+                    <div class="reviews">
+                        {% for review in reviews %}
+                        <div class="review mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <h5 class="mb-0">{{ review.user.username }}</h5>
+                                    <small class="text-muted">{{ review.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                                <div class="rating">
+                                    {% for i in range(5) %}
+                                    {% if i < review.rating %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    {% else %}
+                                    <i class="bi bi-star text-warning"></i>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="mb-0">{{ review.comment }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">아직 작성된 리뷰가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

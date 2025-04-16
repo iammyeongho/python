@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}홈 - 전자상거래 시스템{% endblock %}
+
+{% block content %}
+<!-- 히어로 섹션 -->
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold">최고의 쇼핑 경험</h1>
+                <p class="lead">다양한 상품과 특별한 혜택을 만나보세요</p>
+                <a href="#featured-products" class="btn btn-light btn-lg">상품 보기</a>
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='images/hero-image.jpg') }}" alt="쇼핑 이미지" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 카테고리 섹션 -->
+<div class="categories-section mb-5">
+    <div class="container">
+        <h2 class="text-center mb-4">카테고리</h2>
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text">{{ category.description }}</p>
+                        <a href="{{ url_for('category_products', category_id=category.id) }}" class="btn btn-primary">보기</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 인기 상품 섹션 -->
+<div class="featured-products-section mb-5" id="featured-products">
+    <div class="container">
+        <h2 class="text-center mb-4">인기 상품</h2>
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" class="card-img-top" alt="상품 이미지">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description[:100] }}...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 mb-0">{{ product.price|int }}원</span>
+                            {% if product.stock > 0 %}
+                            <span class="badge bg-success">재고 있음</span>
+                            {% else %}
+                            <span class="badge bg-danger">품절</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary w-100">상세보기</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- 특별 혜택 섹션 -->
+<div class="special-offers-section bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">특별 혜택</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-truck fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">무료 배송</h5>
+                        <p class="card-text">5만원 이상 구매 시 무료 배송</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">안전한 결제</h5>
+                        <p class="card-text">안전한 결제 시스템</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-headset fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">24/7 고객 지원</h5>
+                        <p class="card-text">언제든지 문의하세요</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
