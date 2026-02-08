@@ -1,0 +1,26 @@
+# FastAPI 코어
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# 데이터베이스
+sqlalchemy==2.0.25
+asyncpg==0.29.0          # PostgreSQL 비동기 드라이버
+alembic==1.13.1          # DB 마이그레이션
+
+# 검증 & 설정
+pydantic==2.5.3
+pydantic-settings==2.1.0
+email-validator==2.1.0
+
+# 인증
+python-jose[cryptography]==3.3.0   # JWT
+passlib[bcrypt]==1.7.4             # 비밀번호 해싱
+python-multipart==0.0.6            # Form 데이터
+
+# 테스트
+pytest==7.4.4
+pytest-asyncio==0.23.3
+httpx==0.26.0            # 비동기 HTTP 클라이언트
+
+# 개발 도구
+python-dotenv==1.0.0
