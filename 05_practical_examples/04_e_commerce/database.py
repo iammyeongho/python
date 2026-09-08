@@ -7,7 +7,9 @@ from models import db, User, Product, Category, Order, OrderItem, Review
 import os
 
 # Flask 확장 초기화
-db = SQLAlchemy()
+# db 는 models.py 에서 생성한 인스턴스를 그대로 사용한다.
+# 여기서 SQLAlchemy() 를 다시 만들면 모델이 등록된 인스턴스와 분리되어
+# init_app() 이 적용되지 않는다.
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()

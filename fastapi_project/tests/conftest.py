@@ -10,9 +10,10 @@ Fixture란?
 """
 
 import pytest
-import asyncio
+import pytest_asyncio
 from typing import AsyncGenerator
 from httpx import AsyncClient, ASGITransport
+from sqlalchemy.pool import StaticPool
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -34,6 +35,9 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 test_engine = create_async_engine(
     TEST_DATABASE_URL,
     echo=False,
+    # 인메모리 SQLite 는 커넥션마다 독립 DB 라, 풀을 고정해 하나를 공유해야 한다
+    poolclass=StaticPool,
+    connect_args={"check_same_thread": False},
 )
 
 TestSessionLocal = async_sessionmaker(
@@ -47,19 +51,7 @@ TestSessionLocal = async_sessionmaker(
 # Fixtures
 # ============================================================================
 
-@pytest.fixture(scope="session")
-def event_loop():
-    """
-    이벤트 루프 fixture
-
-    pytest-asyncio에서 사용
-    """
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
-
-
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def db_session() -> AsyncGenerator[AsyncSession, None]:
     """
     테스트용 DB 세션
@@ -79,7 +71,7 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
         await conn.run_sync(Base.metadata.drop_all)
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """
     테스트용 HTTP 클라이언트
@@ -116,7 +108,7 @@ def user_data():
     }
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def created_user(client: AsyncClient, user_data: dict):
     """
     생성된 사용자 fixture
@@ -127,7 +119,7 @@ async def created_user(client: AsyncClient, user_data: dict):
     return response.json()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def auth_headers(client: AsyncClient, user_data: dict):
     """
     인증 헤더 fixture

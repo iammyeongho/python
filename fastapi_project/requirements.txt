@@ -3,7 +3,7 @@ fastapi==0.109.0
 uvicorn[standard]==0.27.0
 
 # 데이터베이스
-sqlalchemy==2.0.25
+sqlalchemy[asyncio]==2.0.25          # greenlet 포함 (async 필수)
 asyncpg==0.29.0          # PostgreSQL 비동기 드라이버
 alembic==1.13.1          # DB 마이그레이션
 
@@ -15,11 +15,13 @@ email-validator==2.1.0
 # 인증
 python-jose[cryptography]==3.4.0   # JWT
 passlib[bcrypt]==1.7.4             # 비밀번호 해싱
+bcrypt==4.3.0                      # passlib 1.7.4 는 bcrypt 5.x 와 비호환
 python-multipart==0.0.31           # Form 데이터
 
 # 테스트
 pytest==7.4.4
 pytest-asyncio==0.23.3
+aiosqlite==0.21.0                  # 테스트용 SQLite 비동기 드라이버
 httpx==0.26.0            # 비동기 HTTP 클라이언트
 
 # 개발 도구

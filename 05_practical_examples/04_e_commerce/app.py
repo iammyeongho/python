@@ -19,6 +19,17 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
+# 템플릿 전역 함수
+# templates/ 에서 get_all_categories(), get_product_by_id() 를 직접 호출하므로
+# Jinja 컨텍스트에 등록해 준다.
+@app.context_processor
+def inject_template_helpers():
+    return {
+        'get_all_categories': get_all_categories,
+        'get_product_by_id': get_product_by_id,
+    }
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
