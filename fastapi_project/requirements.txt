@@ -18,8 +18,8 @@ passlib[bcrypt]==1.7.4             # 비밀번호 해싱
 python-multipart==0.0.31           # Form 데이터
 
 # 테스트
-pytest==9.0.3
-pytest-asyncio==1.4.0
+pytest==7.4.4
+pytest-asyncio==0.23.3
 httpx==0.26.0            # 비동기 HTTP 클라이언트
 
 # 개발 도구

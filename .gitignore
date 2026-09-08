@@ -19,6 +19,11 @@ dist/
 .env.*
 !.env.example
 
+# 로컬 DB / 실행 산출물
+*.db
+*.sqlite3
+instance/
+
 # 테스트 / 커버리지
 .pytest_cache/
 .coverage
